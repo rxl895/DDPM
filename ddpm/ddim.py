@@ -117,15 +117,17 @@ def ddim_sample_loop(
     else:
         x = noise.to(device)
     
+    # Setup progress bar if available
+    iterator = timesteps
     if verbose:
         try:
             from tqdm import tqdm
-            timesteps = tqdm(timesteps, desc="DDIM sampling")
+            iterator = tqdm(timesteps, desc="DDIM sampling")
         except ImportError:
             pass
     
     # Iterate through timesteps
-    for i, t in enumerate(timesteps):
+    for i, t in enumerate(iterator):
         # Get previous timestep
         t_prev = timesteps[i + 1] if i + 1 < len(timesteps) else -1
         
