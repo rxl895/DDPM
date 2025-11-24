@@ -317,13 +317,27 @@ def main():
     model = SmallUNet(in_channels=3, base_ch=64).to(device)
     
     checkpoint = torch.load(args.checkpoint, map_location=device)
-    if 'model_state_dict' in checkpoint:
-        model.load_state_dict(checkpoint['model_state_dict'])
-    else:
-        model.load_state_dict(checkpoint)
+    
+    # Try to load the checkpoint - handle both old and new formats
+    try:
+        if 'model_state_dict' in checkpoint:
+            model.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            model.load_state_dict(checkpoint)
+        print("Model loaded successfully!")
+    except RuntimeError as e:
+        print(f"Warning: Could not load checkpoint with current architecture.")
+        print(f"Error: {e}")
+        print("\nTrying with base_ch=32 (old architecture)...")
+        # Try smaller model that matches old checkpoint
+        model = SmallUNet(in_channels=3, base_ch=32).to(device)
+        if 'model_state_dict' in checkpoint:
+            model.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            model.load_state_dict(checkpoint)
+        print("Model loaded successfully with base_ch=32!")
     
     model.eval()
-    print("Model loaded successfully!")
     
     # Get all schedules
     schedules = get_beta_schedule_variants(num_timesteps=1000)
