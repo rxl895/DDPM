@@ -27,6 +27,9 @@ echo "Working directory: $SLURM_SUBMIT_DIR"
 # Change to the directory where sbatch was called (where the repo is)
 cd $SLURM_SUBMIT_DIR
 
+# Add current directory to Python path so it can find the ddpm module
+export PYTHONPATH="${SLURM_SUBMIT_DIR}:${PYTHONPATH}"
+
 # Run ablation study with DDIM sampling (faster)
 python examples/ablation_noise_schedules.py \
     --checkpoint checkpoints/final_model.pt \
