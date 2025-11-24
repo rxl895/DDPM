@@ -68,9 +68,8 @@ outputs/
 logs/
 wandb/
 
-# HPC scripts (personal)
-run_*.sh
-*.slurm
+# HPC scripts are tracked in scripts/ directory
+# Only ignore job output files
 
 # Temporary files
 *.tmp
