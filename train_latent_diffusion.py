@@ -129,12 +129,12 @@ def train_latent_diffusion(
     train(
         latent_unet,
         latent_loader,
-        optimizer,
-        betas,
-        epochs=diffusion_epochs,
+        num_epochs=diffusion_epochs,
+        lr=lr_diffusion,
+        betas=betas,
         device=device,
         checkpoint_dir="checkpoints",
-        checkpoint_prefix="latent_diffusion"
+        save_interval=10
     )
     
     print("\n" + "="*80)
