@@ -23,6 +23,9 @@ echo "========================================"
 date
 echo ""
 
+# Change to repository root to ensure imports work
+cd /scratch/rxl895/DDPM || cd ~/DDPM || cd $SLURM_SUBMIT_DIR
+
 # Run ablation study with DDIM sampling (faster)
 python examples/ablation_noise_schedules.py \
     --checkpoint checkpoints/final_model.pt \
