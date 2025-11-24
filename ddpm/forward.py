@@ -9,6 +9,8 @@ References:
   https://arxiv.org/abs/2006.11239
 """
 from typing import Optional
+import math
+import numpy as np
 
 import torch
 
@@ -21,10 +23,57 @@ def linear_beta_schedule(timesteps: int, beta_start: float = 1e-4, beta_end: flo
     return torch.linspace(beta_start, beta_end, timesteps)
 
 
+def cosine_beta_schedule(timesteps: int, s: float = 0.008) -> torch.Tensor:
+    """Cosine schedule as proposed in https://arxiv.org/abs/2102.09672.
+    
+    This schedule provides a slower noise addition at the beginning and end,
+    which can lead to better sample quality.
+    """
+    steps = timesteps + 1
+    x = torch.linspace(0, timesteps, steps)
+    alphas_cumprod = torch.cos(((x / timesteps) + s) / (1 + s) * math.pi * 0.5) ** 2
+    alphas_cumprod = alphas_cumprod / alphas_cumprod[0]
+    betas = 1 - (alphas_cumprod[1:] / alphas_cumprod[:-1])
+    return torch.clamp(betas, 0.0001, 0.9999)
+
+
+def quadratic_beta_schedule(timesteps: int, beta_start: float = 1e-4, beta_end: float = 0.02) -> torch.Tensor:
+    """Quadratic schedule - slower noise addition early, faster later.
+    
+    Useful for retaining more signal in early timesteps.
+    """
+    return torch.linspace(beta_start**0.5, beta_end**0.5, timesteps) ** 2
+
+
+def sigmoid_beta_schedule(timesteps: int, beta_start: float = 1e-4, beta_end: float = 0.02) -> torch.Tensor:
+    """Sigmoid schedule - smooth S-curve transition.
+    
+    Provides gradual transition with most change in the middle timesteps.
+    """
+    betas = torch.linspace(-6, 6, timesteps)
+    return torch.sigmoid(betas) * (beta_end - beta_start) + beta_start
+
+
 def get_named_beta_schedule(schedule: str, timesteps: int) -> torch.Tensor:
+    """Get a named beta schedule.
+    
+    Args:
+        schedule: One of 'linear', 'cosine', 'quadratic', 'sigmoid'
+        timesteps: Number of diffusion timesteps
+        
+    Returns:
+        Tensor of shape (timesteps,) with beta values
+    """
     if schedule == "linear":
         return linear_beta_schedule(timesteps)
-    raise ValueError(f"Unknown beta schedule: {schedule}")
+    elif schedule == "cosine":
+        return cosine_beta_schedule(timesteps)
+    elif schedule == "quadratic":
+        return quadratic_beta_schedule(timesteps)
+    elif schedule == "sigmoid":
+        return sigmoid_beta_schedule(timesteps)
+    else:
+        raise ValueError(f"Unknown beta schedule: {schedule}")
 
 
 def compute_alphas(betas: torch.Tensor):

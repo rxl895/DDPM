@@ -20,6 +20,7 @@ A simple, clean PyTorch implementation of DDPM based on the paper ["Denoising Di
 - [Architecture Details](#architecture-details)
 - [Usage Examples](#usage-examples)
 - [Performance Comparison](#performance-comparison)
+- [Ablation Studies](#ablation-studies)
 - [Educational Value](#educational-value)
 - [Citation](#citation)
 - [Contributing](#contributing)
@@ -27,7 +28,7 @@ A simple, clean PyTorch implementation of DDPM based on the paper ["Denoising Di
 
 ## Features
 
-- ✅ Forward noising process with configurable beta schedules
+- ✅ Forward noising process with 5 beta schedules (linear, cosine, quadratic, sigmoid, exponential)
 - ✅ Epsilon-prediction UNet with time conditioning
 - ✅ Reverse sampling (ancestral sampling)
 - ✅ DDIM fast sampling (13.5x speedup)
@@ -35,7 +36,8 @@ A simple, clean PyTorch implementation of DDPM based on the paper ["Denoising Di
 - ✅ Training loop with checkpointing
 - ✅ CIFAR-10 and MNIST data loaders
 - ✅ FID score evaluation
-- ✅ Comprehensive documentation
+- ✅ Comprehensive ablation studies
+- ✅ Extensive documentation
 
 ## Installation
 
@@ -379,13 +381,57 @@ This implementation demonstrates the complete evolution from DDPM to Stable Diff
 - ✅ Production-ready speed
 - ✅ Semantic compression improves quality
 
-**📖 For detailed analysis, see [COMPARISON.md](./COMPARISON.md)**
+**📖 For detailed analysis, see [COMPARISON.md](./docs/COMPARISON.md)**
 
 This document explains:
 - Why latent diffusion changed everything
 - Computational complexity analysis
 - When to use each approach
 - The Stable Diffusion formula
+
+---
+
+## Ablation Studies
+
+Systematic analysis of design choices and their impact on performance.
+
+### Noise Schedule Comparison
+
+Compare 5 different beta schedules:
+- **Linear** - Original DDPM baseline
+- **Cosine** - Improved DDPM (typically best quality)
+- **Quadratic** - Smooth acceleration
+- **Sigmoid** - S-curve transition
+- **Exponential** - Fast initial growth
+
+Run the ablation study:
+```bash
+python examples/ablation_noise_schedules.py \
+    --checkpoint checkpoints/final_model.pt \
+    --num_samples 5000 \
+    --method ddim \
+    --ddim_steps 100
+```
+
+**Output:**
+- FID scores for each schedule
+- Sampling time comparisons
+- Visual quality comparisons
+- Comprehensive analysis plots
+
+**Expected Results:**
+- Cosine schedule typically improves FID by 5-10%
+- Minimal speed difference between schedules
+- Quality gains are essentially "free"
+
+### Why Ablation Studies Matter
+
+1. **For Researchers:** Understand which design choices actually matter
+2. **For Practitioners:** Choose optimal settings for your use case
+3. **For Reviewers:** Demonstrate thorough experimental validation
+4. **For Learning:** See the impact of each hyperparameter
+
+**📖 For full details, see [ABLATION_STUDIES.md](./docs/ABLATION_STUDIES.md)**
 - Future directions
 
 ---

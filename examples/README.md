@@ -46,6 +46,26 @@ This will compare:
 
 And report FID scores and sampling times for each method.
 
+## Ablation Studies
+
+### Noise Schedule Comparison
+```bash
+python ablation_noise_schedules.py \
+    --checkpoint ./checkpoints/final_model.pt \
+    --num_samples 5000 \
+    --batch_size 64 \
+    --method ddim \
+    --ddim_steps 100
+```
+
+Compares 5 beta schedules (linear, cosine, quadratic, sigmoid, exponential) with:
+- FID score evaluation
+- Sampling time measurements
+- Visual quality comparison
+- Comprehensive analysis plots
+
+See `../docs/ABLATION_STUDIES.md` for detailed documentation.
+
 ## HPC Scripts
 
 See `../scripts/` for SLURM job submission scripts if running on an HPC cluster.
