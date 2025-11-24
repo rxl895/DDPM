@@ -31,6 +31,7 @@ def p_mean_variance(model, x_t: torch.Tensor, t: torch.Tensor, betas: torch.Tens
     All tensors have same shape as x_t.
     """
     T = betas.shape[0]
+    betas = betas.to(x_t.device)
     comps = compute_alphas(betas)
     alphas = comps["alphas"].to(x_t.device)
     alphas_cumprod = comps["alphas_cumprod"].to(x_t.device)
