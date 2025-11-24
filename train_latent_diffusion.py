@@ -95,31 +95,34 @@ def train_latent_diffusion(
     print(f"Latent UNet parameters: {params:,}")
     
     # Create latent dataloader (encode images on-the-fly)
-    class LatentDataset(torch.utils.data.Dataset):
-        def __init__(self, base_dataset, encoder, device):
-            self.base_dataset = base_dataset
-            self.encoder = encoder
-            self.device = device
-            
-        def __len__(self):
-            return len(self.base_dataset.dataset)
-        
-        def __getitem__(self, idx):
-            img, label = self.base_dataset.dataset[idx]
-            with torch.no_grad():
-                img = img.unsqueeze(0).to(self.device)
-                latent = self.encoder.encode(img).squeeze(0).cpu()
-            return latent, label
-    
-    # Pre-encode dataset (faster training)
     print("Pre-encoding dataset to latent space...")
-    latent_dataset = LatentDataset(dataloader, autoencoder, device)
+    
+    # Pre-encode all images to avoid CUDA multiprocessing issues
+    all_latents = []
+    all_labels = []
+    
+    with torch.no_grad():
+        for batch_imgs, batch_labels in dataloader:
+            batch_imgs = batch_imgs.to(device)
+            batch_latents = autoencoder.encode(batch_imgs)
+            all_latents.append(batch_latents.cpu())
+            all_labels.append(batch_labels)
+    
+    all_latents = torch.cat(all_latents, dim=0)
+    all_labels = torch.cat(all_labels, dim=0)
+    
+    print(f"Encoded {len(all_latents)} samples to latent space")
+    print(f"Latent shape: {all_latents[0].shape}")
+    
+    # Create simple tensor dataset
+    latent_dataset = torch.utils.data.TensorDataset(all_latents, all_labels)
     latent_loader = torch.utils.data.DataLoader(
         latent_dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=4,
-        pin_memory=True
+        num_workers=0,  # No workers to avoid CUDA issues
+        pin_memory=True,
+        drop_last=True
     )
     
     # Train diffusion model
