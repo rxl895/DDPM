@@ -1,18 +1,41 @@
 # DDPM - Denoising Diffusion Probabilistic Models
 
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 A simple, clean PyTorch implementation of DDPM based on the paper ["Denoising Diffusion Probabilistic Models" by Ho et al.](https://arxiv.org/abs/2006.11239)
 
-From Denoising Diffusion Models to Latent Diffusion: A Comparative Case Study with Hands-On Implementation.
+**From Denoising Diffusion Models to Latent Diffusion: A Comparative Case Study with Hands-On Implementation.**
+
+> This repository demonstrates the evolution of diffusion models from pixel-space DDPM to latent diffusion (Stable Diffusion approach), with quantitative comparisons showing why latent diffusion revolutionized generative AI.
+
+## 📚 Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Architecture Details](#architecture-details)
+- [Usage Examples](#usage-examples)
+- [Performance Comparison](#performance-comparison)
+- [Educational Value](#educational-value)
+- [Citation](#citation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
 - ✅ Forward noising process with configurable beta schedules
 - ✅ Epsilon-prediction UNet with time conditioning
 - ✅ Reverse sampling (ancestral sampling)
+- ✅ DDIM fast sampling (13.5x speedup)
+- ✅ Latent Diffusion (Stable Diffusion approach)
 - ✅ Training loop with checkpointing
 - ✅ CIFAR-10 and MNIST data loaders
-- ✅ Sampling visualization scripts
-- ✅ Clean, readable code with comprehensive tests
+- ✅ FID score evaluation
+- ✅ Comprehensive documentation
 
 ## Installation
 
@@ -55,10 +78,10 @@ python3 -m ddpm.test_sampling
 
 ```bash
 # Basic training (100 epochs, batch size 128)
-python train_cifar10.py --epochs 100 --batch-size 128 --lr 1e-4
+python examples/train_cifar10.py --epochs 100 --batch-size 128 --lr 1e-4
 
 # Training with custom settings
-python train_cifar10.py \
+python examples/train_cifar10.py \
     --epochs 200 \
     --batch-size 64 \
     --lr 2e-4 \
@@ -72,13 +95,13 @@ python train_cifar10.py \
 
 ```bash
 # Generate samples from a trained model
-python demo_sampling.py --checkpoint checkpoints/final_model.pt --num-samples 64
+python examples/demo_sampling.py --checkpoint checkpoints/final_model.pt --num-samples 64
 
 # Generate from untrained model (for testing)
-python demo_sampling.py --num-samples 16 --output-dir test_samples
+python examples/demo_sampling.py --num-samples 16 --output-dir test_samples
 
 # Custom sampling settings
-python demo_sampling.py \
+python examples/demo_sampling.py \
     --checkpoint checkpoints/checkpoint_epoch_50.pt \
     --num-samples 100 \
     --timesteps 1000 \
@@ -90,19 +113,30 @@ python demo_sampling.py \
 
 ```
 DDPM/
-├── ddpm/
-│   ├── __init__.py           # Package initialization
+├── ddpm/                     # Core implementation
 │   ├── forward.py            # Forward noising process (q_sample)
 │   ├── unet.py               # SmallUNet epsilon-prediction model
 │   ├── sample.py             # Reverse sampling (p_sample, p_sample_loop)
+│   ├── ddim.py               # DDIM fast sampling
 │   ├── train.py              # Training loss and loop
 │   ├── data.py               # Data loaders (CIFAR-10, MNIST)
-│   ├── test_forward.py       # Tests for forward process
-│   ├── test_unet.py          # Tests for UNet
-│   └── test_sampling.py      # Tests for sampling
-├── train_cifar10.py          # Training script for CIFAR-10
-├── demo_sampling.py          # Sampling visualization demo
+│   ├── autoencoder.py        # VAE for latent diffusion
+│   ├── latent_unet.py        # UNet for latent space
+│   └── evaluation.py         # FID score calculation
+├── examples/                 # Example scripts
+│   ├── train_cifar10.py      # Pixel-space DDPM training
+│   ├── train_latent_diffusion.py  # Latent diffusion training
+│   ├── demo_sampling.py      # DDPM sampling demo
+│   ├── demo_ddim.py          # DDIM sampling demo
+│   ├── demo_latent_diffusion.py   # Latent diffusion demo
+│   ├── evaluate.py           # FID evaluation script
+│   └── README.md             # Examples documentation
+├── scripts/                  # HPC SLURM scripts
+├── docs/                     # Documentation
+│   └── COMPARISON.md         # Pixel vs Latent analysis
 ├── requirements.txt          # Python dependencies
+├── CONTRIBUTING.md           # Contribution guidelines
+├── LICENSE                   # MIT License
 └── README.md                 # This file
 ```
 
@@ -440,4 +474,25 @@ If you use this code in your research, please cite the original DDPM paper:
 ---
 
 **This is a complete case study demonstrating why Latent Diffusion Models revolutionized generative AI.** 🚀
+
+---
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+Areas for improvement:
+- Additional sampling methods (DPM-Solver, PNDM)
+- More datasets and architectures
+- Evaluation metrics (IS, LPIPS)
+- Training optimizations
+- Documentation enhancements
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Star ⭐ this repo if you find it helpful!**
 
