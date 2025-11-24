@@ -56,7 +56,7 @@ def main():
     
     # Load data
     print("Loading CIFAR-10 dataset...")
-    dataloader = get_cifar10_dataloader(batch_size=args.batch_size, train=True)
+    dataloader = get_cifar10_dataloader(batch_size=args.batch_size)
     
     # Setup
     betas = get_named_beta_schedule("linear", 1000)
