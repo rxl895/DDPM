@@ -15,8 +15,8 @@
 module purge
 module load PyTorch/1.11.0-foss-2021a-CUDA-11.3.1
 
-# Install additional dependencies if needed
-pip install --user scipy matplotlib
+# Install compatible versions of dependencies
+pip install --user "numpy>=1.21,<1.23" scipy "matplotlib>=3.5,<3.8"
 
 echo "Starting Noise Schedule Ablation Study"
 echo "========================================"
