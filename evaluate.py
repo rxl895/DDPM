@@ -22,10 +22,19 @@ from ddpm.train import load_checkpoint
 def time_sampling(sample_fn, model, shape, betas, device, num_runs=3, **kwargs):
     """Time how long sampling takes."""
     times = []
+    
+    # Check if function accepts verbose parameter
+    import inspect
+    sig = inspect.signature(sample_fn)
+    has_verbose = 'verbose' in sig.parameters
+    
     for _ in range(num_runs):
         start = time.time()
         with torch.no_grad():
-            _ = sample_fn(model, shape, betas, device=device, verbose=False, **kwargs)
+            if has_verbose:
+                _ = sample_fn(model, shape, betas, device=device, verbose=False, **kwargs)
+            else:
+                _ = sample_fn(model, shape, betas, device=device, **kwargs)
         torch.cuda.synchronize() if device.type == 'cuda' else None
         times.append(time.time() - start)
     
