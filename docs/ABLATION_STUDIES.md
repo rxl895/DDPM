@@ -2,6 +2,8 @@
 
 This directory contains ablation studies that systematically analyze the impact of different design choices on DDPM performance.
 
+> **Note:** The ablation studies require a model checkpoint trained with the current UNet architecture. If you have an older checkpoint, you'll need to retrain with the current code. See the Training section in the main README.
+
 ## 1. Noise Schedule Ablation
 
 **Purpose:** Compare different beta schedules and their impact on sample quality and generation speed.
