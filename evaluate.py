@@ -134,15 +134,19 @@ def main():
     results.append("-" * 80)
     
     # DDPM row
-    results.append(f"{'DDPM':<15} {1000:<10} {f'{ddpm_time:.2f}s':<20} {f'{ddpm_time/64:.3f}s':<15} {f'{ddpm_fid:.2f}':<12} {'1.00x':<10}")
+    ddpm_time_str = f"{ddpm_time:.2f}s"
+    ddpm_per_img = f"{ddpm_time/64:.3f}s"
+    ddpm_fid_str = f"{ddpm_fid:.2f}"
+    results.append(f"{'DDPM':<15} {1000:<10} {ddpm_time_str:<20} {ddpm_per_img:<15} {ddpm_fid_str:<12} {'1.00x':<10}")
     
     # DDIM rows
     for dr in ddim_results:
         method = f"DDIM (η={dr['eta']})"
-        results.append(
-            f"{method:<15} {dr['steps']:<10} {f'{dr['time']:.2f}s':<20} "
-            f"{f'{dr['time']/64:.3f}s':<15} {f'{dr['fid']:.2f}':<12} {f'{dr['speedup']:.2f}x':<10}"
-        )
+        time_str = f"{dr['time']:.2f}s"
+        per_img = f"{dr['time']/64:.3f}s"
+        fid_str = f"{dr['fid']:.2f}"
+        speedup_str = f"{dr['speedup']:.2f}x"
+        results.append(f"{method:<15} {dr['steps']:<10} {time_str:<20} {per_img:<15} {fid_str:<12} {speedup_str:<10}")
     
     results.append("")
     results.append("=" * 80)
