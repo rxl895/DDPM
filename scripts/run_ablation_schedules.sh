@@ -22,9 +22,10 @@ echo "Starting Noise Schedule Ablation Study"
 echo "========================================"
 date
 echo ""
+echo "Working directory: $SLURM_SUBMIT_DIR"
 
-# Change to repository root to ensure imports work
-cd /scratch/rxl895/DDPM || cd ~/DDPM || cd $SLURM_SUBMIT_DIR
+# Change to the directory where sbatch was called (where the repo is)
+cd $SLURM_SUBMIT_DIR
 
 # Run ablation study with DDIM sampling (faster)
 python examples/ablation_noise_schedules.py \
