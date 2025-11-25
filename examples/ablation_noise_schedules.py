@@ -66,8 +66,8 @@ def visualize_schedules(schedules, save_path='ablation_results'):
     # Plot alpha values
     ax = axes[0, 1]
     for name, betas in schedules.items():
-        alphas, _, _, _ = compute_alphas(betas)
-        ax.plot(alphas.numpy(), label=name, linewidth=2)
+        alpha_dict = compute_alphas(betas)
+        ax.plot(alpha_dict['alphas'].numpy(), label=name, linewidth=2)
     ax.set_xlabel('Timestep')
     ax.set_ylabel('Alpha')
     ax.set_title('Alpha Schedules (1 - Beta)')
@@ -77,8 +77,8 @@ def visualize_schedules(schedules, save_path='ablation_results'):
     # Plot cumulative alpha_bar
     ax = axes[1, 0]
     for name, betas in schedules.items():
-        _, alphas_cumprod, _, _ = compute_alphas(betas)
-        ax.plot(alphas_cumprod.numpy(), label=name, linewidth=2)
+        alpha_dict = compute_alphas(betas)
+        ax.plot(alpha_dict['alphas_cumprod'].numpy(), label=name, linewidth=2)
     ax.set_xlabel('Timestep')
     ax.set_ylabel('Alpha_bar (Cumulative Product)')
     ax.set_title('Signal Retention over Time')
@@ -88,7 +88,8 @@ def visualize_schedules(schedules, save_path='ablation_results'):
     # Plot SNR (Signal-to-Noise Ratio)
     ax = axes[1, 1]
     for name, betas in schedules.items():
-        _, alphas_cumprod, _, _ = compute_alphas(betas)
+        alpha_dict = compute_alphas(betas)
+        alphas_cumprod = alpha_dict['alphas_cumprod']
         snr = alphas_cumprod / (1 - alphas_cumprod)
         ax.plot(np.log10(snr.numpy()), label=name, linewidth=2)
     ax.set_xlabel('Timestep')
