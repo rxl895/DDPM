@@ -37,12 +37,13 @@ def get_beta_schedule_variants(num_timesteps=1000):
         'sigmoid': get_named_beta_schedule('sigmoid', num_timesteps),
     }
     
-    # Add exponential schedule
+    # Add exponential schedule (convert to torch tensor)
     beta_start = 1e-4
     beta_end = 0.02
-    schedules['exponential'] = np.exp(
+    exponential_betas = np.exp(
         np.linspace(np.log(beta_start), np.log(beta_end), num_timesteps)
     )
+    schedules['exponential'] = torch.from_numpy(exponential_betas).float()
     
     return schedules
 
