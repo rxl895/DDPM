@@ -137,7 +137,7 @@ def evaluate_schedule(model, schedule_name, betas, device, num_samples=5000,
                     model,
                     (current_batch_size, 3, 32, 32),
                     betas,
-                    ddim_steps=ddim_steps,
+                    num_steps=ddim_steps,
                     eta=0.0,
                     device=device
                 )
