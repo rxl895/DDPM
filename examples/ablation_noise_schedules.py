@@ -149,7 +149,7 @@ def evaluate_schedule(model, schedule_name, betas, device, num_samples=5000,
     
     # Calculate FID
     print(f"Calculating FID score for {schedule_name}...")
-    dataloader = get_cifar10_dataloader(batch_size=batch_size, train=True)
+    dataloader = get_cifar10_dataloader(batch_size=batch_size)
     fid_score = calculate_fid(all_samples, dataloader, device=device, num_samples=num_samples)
     
     results = {
